@@ -1,0 +1,53 @@
+{
+  "name": "@mean-finance/permit2-adapter",
+  "description": "This repository holds some adapter contracts that will allow to use Permit2 from contracts that don't support it natively",
+  "version": "1.0.0",
+  "author": {
+    "name": "Mean-Finance",
+    "url": "https://github.com/Mean-Finance"
+  },
+  "devDependencies": {
+    "@ethersproject/hash": "5.7.0",
+    "@nomicfoundation/hardhat-chai-matchers": "1.0.6",
+    "@nomicfoundation/hardhat-foundry": "1.0.3",
+    "@nomicfoundation/hardhat-network-helpers": "1.0.8",
+    "@nomicfoundation/hardhat-toolbox": "2.0.2",
+    "@nomiclabs/hardhat-ethers": "2.2.3",
+    "@nomiclabs/hardhat-etherscan": "3.1.7",
+    "@typechain/ethers-v5": "10.2.1",
+    "@typechain/hardhat": "6.1.6",
+    "@types/chai": "4.3.5",
+    "@types/mocha": "10.0.1",
+    "@types/node": "20.5.6",
+    "chai": "4.3.8",
+    "ethers": "5.7.2",
+    "hardhat": "2.17.1",
+    "hardhat-exposed": "0.3.11",
+    "hardhat-gas-reporter": "1.0.9",
+    "mocha": "10.2.0",
+    "prettier": "2.8.7",
+    "solhint-community": "3.5.0",
+    "solidity-coverage": "0.8.4",
+    "ts-node": "10.9.1",
+    "typechain": "8.3.1",
+    "typescript": "5.2.2"
+  },
+  "keywords": [
+    "blockchain",
+    "ethereum",
+    "forge",
+    "foundry",
+    "smart-contracts",
+    "solidity",
+    "template"
+  ],
+  "private": true,
+  "scripts": {
+    "clean": "rm -rf cache out",
+    "lint": "pnpm lint:sol && pnpm prettier:check",
+    "lint:sol": "forge fmt --check && pnpm solhint \"{script,src,test}/**/*.sol\"",
+    "prettier:check": "prettier --check \"**/*.{json,md,yml}\"",
+    "prettier:write": "prettier --write \"**/*.{json,md,yml}\"",
+    "test-hardhat": "npx hardhat compile --no-typechain --show-stack-traces && npx hardhat test"
+  }
+}

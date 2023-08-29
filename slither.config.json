@@ -1,0 +1,4 @@
+{
+  "detectors_to_exclude": "naming-convention,solc-version,similar-names",
+  "filter_paths": "(mocks/|test/|lib/)"
+}
