@@ -190,9 +190,6 @@ contract NFTPermissionsTest is PRBTest, StdUtils {
     INFTPermissions.PermissionSet[] memory _permissionSet = new INFTPermissions.PermissionSet[](1);
     _permissionSet[0] = INFTPermissions.PermissionSet({ operator: operator1, permissions: Utils.permissions(PERMISSION_1) });
 
-    vm.expectEmit();
-    emit ModifiedPermissions(1, _permissionSet);
-
     uint256 _positionId = nftPermissions.mintWithPermissions(owner, _permissionSet);
 
     assertEq(_positionId, 1);

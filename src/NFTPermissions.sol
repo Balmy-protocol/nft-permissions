@@ -72,7 +72,7 @@ abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
     for (uint256 i = 0; i < _positionPermissions.length;) {
       uint256 _positionId = _positionPermissions[i].positionId;
       if (msg.sender != ownerOf(_positionId)) revert NotOwner();
-      _setPermissions(_positionId, _positionPermissions[i].permissionSets);
+      _modify(_positionId, _positionPermissions[i].permissionSets);
       unchecked {
         i++;
       }
@@ -96,13 +96,21 @@ abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
         // Make sure that all positions belong to the same owner
         if (_owner != ownerOf(_positionId)) revert NotOwner();
       }
-      _setPermissions(_positionId, _permissions[i].permissionSets);
+      _modify(_positionId, _permissions[i].permissionSets);
       unchecked {
         i++;
       }
     }
   }
 
+  /**
+   * @notice Mints a new position with the assigned permissions
+   * @dev Please not that this function does not emit an event with the new assigned permissions. It's up to each contract to then
+   *      emit an event with the permissions, plus any other data they want
+   * @param _owner The owner of the new position
+   * @param _permissions The permissions to assign to the position
+   * @return _positionId The new position's id
+   */
   function _mintWithPermissions(address _owner, PermissionSet[] calldata _permissions) internal returns (uint256 _positionId) {
     _positionId = ++_positionCounter;
     _mint(_owner, _positionId);
@@ -120,6 +128,11 @@ abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
     _;
   }
 
+  function _modify(uint256 _positionId, PermissionSet[] calldata _permissions) private {
+    _setPermissions(_positionId, _permissions);
+    emit ModifiedPermissions(_positionId, _permissions);
+  }
+
   function _setPermissions(uint256 _positionId, PermissionSet[] calldata _permissions) private {
     mapping(address operator => AssignedPermissions permissions) storage _assigned = _assignedPermissions[_positionId];
     uint64 _blockNumber = uint64(block.number);
@@ -134,7 +147,6 @@ abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
         i++;
       }
     }
-    emit ModifiedPermissions(_positionId, _permissions);
   }
 
   /// @dev We are overriding this function to update ownership values on transfers
