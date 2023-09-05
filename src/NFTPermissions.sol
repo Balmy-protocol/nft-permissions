@@ -105,7 +105,7 @@ abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
 
   /**
    * @notice Mints a new position with the assigned permissions
-   * @dev Please not that this function does not emit an event with the new assigned permissions. It's up to each contract to then
+   * @dev Please note that this function does not emit an event with the new assigned permissions. It's up to each contract to then
    *      emit an event with the permissions, plus any other data they want
    * @param _owner The owner of the new position
    * @param _permissions The permissions to assign to the position
