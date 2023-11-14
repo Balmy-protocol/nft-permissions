@@ -25,6 +25,7 @@ import { PermissionHash } from "./libraries/PermissionHash.sol";
  */
 abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
   type EncodedPermissions is uint192;
+
   error MustCallMintWithPermissions();
 
   struct AssignedPermissions {
@@ -176,6 +177,7 @@ abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
     super.transferFrom(_from, _to, _positionId);
   }
 
+  // slither-disable-next-line dead-code
   function _mint(address, uint256) internal pure override {
     // We don't want anyone calling this directly, so we override it and make it revert
     revert MustCallMintWithPermissions();
