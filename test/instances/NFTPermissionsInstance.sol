@@ -6,10 +6,6 @@ import { NFTPermissions } from "../../src/NFTPermissions.sol";
 contract NFTPermissionsInstance is NFTPermissions {
   constructor(string memory _name, string memory _symbol, string memory _version) NFTPermissions(_name, _symbol, _version) { }
 
-  function tokenURI(uint256) public pure override returns (string memory) {
-    return "";
-  }
-
   function mintWithPermissions(address _owner, PermissionSet[] calldata _permissions) external returns (uint256 _positionId) {
     return _mintWithPermissions(_owner, _permissions);
   }

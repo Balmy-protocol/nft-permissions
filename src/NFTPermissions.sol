@@ -118,6 +118,10 @@ abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
     }
   }
 
+  function tokenURI(uint256) public view virtual override returns (string memory) {
+    return "";
+  }
+
   /**
    * @notice Mints a new position with the assigned permissions
    * @dev Please note that this function does not emit an event with the new assigned permissions. It's up to each contract to then
@@ -183,6 +187,7 @@ abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
     revert MustCallMintWithPermissions();
   }
 
+  // slither-disable-next-line dead-code
   function _burn(uint256 _positionId) internal override {
     // Increase burn counter
     unchecked {
