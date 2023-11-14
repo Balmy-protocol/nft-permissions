@@ -79,6 +79,7 @@ jobs:
         with:
           node-version: 16
           fail-on: none
+          slither-version: 0.9.6
           slither-args: --checklist --markdown-root ${{ github.server_url }}/${{ github.repository }}/blob/${{ github.sha }}/
 
       - name: Create/update checklist as PR comment
@@ -132,19 +133,25 @@ jobs:
         with:
           submodules: "recursive"
 
-      - name: Install node
-        uses: actions/setup-node@v1
+      - name: "Install Pnpm"
+        uses: "pnpm/action-setup@v2"
         with:
-          node-version: "16.x"
+          version: "8"
+
+      - name: "Install Node.js"
+        uses: "actions/setup-node@v3"
+        with:
+          cache: "pnpm"
+          node-version: "lts/*"
 
       - name: Install dependencies
-        run: yarn --frozen-lockfile
+        run: pnpm i --frozen-lockfile
 
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
 
       - name: Run unit tests
-        run: yarn test-hardhat
+        run: pnpm test-hardhat
 
       - name: "Add test summary"
         run: |
