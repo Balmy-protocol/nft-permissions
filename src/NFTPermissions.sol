@@ -113,12 +113,14 @@ abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
    * @param _permissions The permissions to assign to the position
    * @return _positionId The new position's id
    */
+  // slither-disable-next-line dead-code
   function _mintWithPermissions(address _owner, PermissionSet[] calldata _permissions) internal returns (uint256 _positionId) {
     _positionId = ++_positionCounter;
     _mint(_owner, _positionId);
     _setPermissions(_positionId, _permissions);
   }
 
+  // slither-disable-next-line dead-code
   function _assertHasPermission(uint256 _positionId, address _account, Permission _permission) internal view {
     if (!hasPermission(_positionId, _account, _permission)) {
       revert AccountWithoutPermission(_positionId, _account, _permission);
