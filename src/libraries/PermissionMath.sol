@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.0;
+pragma solidity >=0.8.8;
 
 import { INFTPermissions } from "../interfaces/INFTPermissions.sol";
 import { NFTPermissions } from "../NFTPermissions.sol";
