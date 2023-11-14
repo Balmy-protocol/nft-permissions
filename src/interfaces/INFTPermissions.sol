@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.8;
 
-import { IERC721 } from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-
-interface INFTPermissions is IERC721 {
+interface INFTPermissions {
   type Permission is uint8;
 
   /// @notice A collection of permissions sets for a specific position

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.8;
 
-import { ERC721 } from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import { ERC721 } from "@solmate/tokens/ERC721.sol";
 import { EIP712 } from "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 import { SignatureChecker } from "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 import { INFTPermissions } from "./interfaces/INFTPermissions.sol";
@@ -25,6 +25,8 @@ import { PermissionHash } from "./libraries/PermissionHash.sol";
  */
 abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
   type EncodedPermissions is uint192;
+
+  error MustCallMintWithPermissions();
 
   struct AssignedPermissions {
     // We only support 192 different permissions (192 bits)
@@ -116,6 +118,10 @@ abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
     }
   }
 
+  function tokenURI(uint256) public view virtual override returns (string memory) {
+    return "";
+  }
+
   /**
    * @notice Mints a new position with the assigned permissions
    * @dev Please note that this function does not emit an event with the new assigned permissions. It's up to each contract to then
@@ -129,7 +135,7 @@ abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
     unchecked {
       _positionId = ++_positionCounter;
     }
-    _mint(_owner, _positionId);
+    super._mint(_owner, _positionId);
     _setPermissions(_positionId, _permissions);
   }
 
@@ -166,18 +172,31 @@ abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
     }
   }
 
-  /// @dev We are overriding this function to update ownership values on transfers
-  function _update(address _to, uint256 _positionId, address _auth) internal override returns (address _from) {
-    _from = super._update(_to, _positionId, _auth);
-    if (_to == address(0)) {
-      // When token is being burned, we can zero out this value
-      _positions[_positionId].lastOwnershipChange = 0;
-      unchecked {
-        _burnCounter++;
-      }
-    } else if (_from != address(0)) {
-      // If the token is being minted, then no there is no need to need to write this
-      _positions[_positionId].lastOwnershipChange = block.number;
+  /*//////////////////////////////////////////////////////////////
+                          ERC721 OVERRIDES
+  //////////////////////////////////////////////////////////////*/
+
+  function transferFrom(address _from, address _to, uint256 _positionId) public override {
+    _positions[_positionId].lastOwnershipChange = block.number;
+    super.transferFrom(_from, _to, _positionId);
+  }
+
+  // slither-disable-next-line dead-code
+  function _mint(address, uint256) internal pure override {
+    // We don't want anyone calling this directly, so we override it and make it revert
+    revert MustCallMintWithPermissions();
+  }
+
+  // slither-disable-next-line dead-code
+  function _burn(uint256 _positionId) internal override {
+    // Increase burn counter
+    unchecked {
+      _burnCounter++;
     }
+
+    // When token is being burned, we can zero out this value
+    _positions[_positionId].lastOwnershipChange = 0;
+
+    super._burn(_positionId);
   }
 }
