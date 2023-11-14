@@ -133,10 +133,16 @@ jobs:
         with:
           submodules: "recursive"
 
-      - name: Install node
-        uses: actions/setup-node@v1
+      - name: "Install Pnpm"
+        uses: "pnpm/action-setup@v2"
         with:
-          node-version: "18.15.0"
+          version: "8"
+
+      - name: "Install Node.js"
+        uses: "actions/setup-node@v3"
+        with:
+          cache: "pnpm"
+          node-version: "lts/*"
 
       - name: Install dependencies
         run: pnpm i --frozen-lockfile
