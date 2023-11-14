@@ -94,7 +94,6 @@ abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
     }
     _modify(_firstPositionId, _permissions[0].permissionSets);
 
-
     for (uint256 i = 1; i < _permissions.length;) {
       uint256 _positionId = _permissions[i].positionId;
       // Make sure that all positions belong to the same owner
