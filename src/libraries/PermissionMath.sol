@@ -18,18 +18,18 @@ library PermissionMath {
    * @return _encodedResult The uint representation
    */
   function encode(INFTPermissions.Permission[] memory _permissions) internal pure returns (NFTPermissions.EncodedPermissions) {
-    uint192 _encodedResult;
+    uint256 _encodedResult;
     for (uint256 i = 0; i < _permissions.length;) {
       uint8 _permission = INFTPermissions.Permission.unwrap(_permissions[i]);
       if (_permission >= 192) {
         revert InvalidPermission(_permission);
       }
-      _encodedResult |= uint192(1 << _permission);
+      _encodedResult |= 1 << _permission;
       unchecked {
         i++;
       }
     }
-    return NFTPermissions.EncodedPermissions.wrap(_encodedResult);
+    return NFTPermissions.EncodedPermissions.wrap(uint192(_encodedResult));
   }
 
   /**
