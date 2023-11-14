@@ -115,7 +115,9 @@ abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
    */
   // slither-disable-next-line dead-code
   function _mintWithPermissions(address _owner, PermissionSet[] calldata _permissions) internal returns (uint256 _positionId) {
-    _positionId = ++_positionCounter;
+    unchecked {
+      _positionId = ++_positionCounter;
+    }
     _mint(_owner, _positionId);
     _setPermissions(_positionId, _permissions);
   }
@@ -159,7 +161,9 @@ abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
     if (_to == address(0)) {
       // When token is being burned, we can delete this entry on the mapping
       delete lastOwnershipChange[_positionId];
-      _burnCounter++;
+      unchecked {
+        _burnCounter++;
+      }
     } else if (_from != address(0)) {
       // If the token is being minted, then no there is no need to need to write this
       lastOwnershipChange[_positionId] = block.number;
