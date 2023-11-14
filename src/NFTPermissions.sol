@@ -85,19 +85,20 @@ abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
     if (block.timestamp > _deadline) revert ExpiredDeadline();
 
     // Note: will fail if _permissions is empty, and we are ok with it
-    address _owner = ownerOf(_permissions[0].positionId);
+    uint256 _firstPositionId = _permissions[0].positionId;
+    address _owner = ownerOf(_firstPositionId);
     if (
       !SignatureChecker.isValidSignatureNow(_owner, _hashTypedDataV4(PermissionHash.hash(_permissions, nextNonce[_owner]++, _deadline)), _signature)
     ) {
       revert InvalidSignature();
     }
+    _modify(_firstPositionId, _permissions[0].permissionSets);
 
-    for (uint256 i = 0; i < _permissions.length;) {
+
+    for (uint256 i = 1; i < _permissions.length;) {
       uint256 _positionId = _permissions[i].positionId;
-      if (i > 0) {
-        // Make sure that all positions belong to the same owner
-        if (_owner != ownerOf(_positionId)) revert NotOwner();
-      }
+      // Make sure that all positions belong to the same owner
+      if (_owner != ownerOf(_positionId)) revert NotOwner();
       _modify(_positionId, _permissions[i].permissionSets);
       unchecked {
         i++;
