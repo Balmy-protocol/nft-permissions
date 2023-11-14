@@ -33,15 +33,20 @@ abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
     uint64 lastUpdated;
   }
 
+  struct PositionData {
+    // The block number for when the position last changed ownership
+    uint256 lastOwnershipChange;
+    // A mapping of assigned permissions per operator
+    mapping(address operator => AssignedPermissions permissions) assigned;
+  }
+
   using PermissionMath for Permission[];
   using PermissionMath for EncodedPermissions;
 
   /// @inheritdoc INFTPermissions
   mapping(address owner => uint256 nextNonce) public nextNonce;
-  /// @inheritdoc INFTPermissions
-  mapping(uint256 positionId => uint256 blockNumber) public lastOwnershipChange;
 
-  mapping(uint256 positionId => mapping(address operator => AssignedPermissions permissions)) private _assignedPermissions;
+  mapping(uint256 positionId => PositionData data) private _positions;
   uint256 private _burnCounter;
   uint256 private _positionCounter;
 
@@ -58,13 +63,19 @@ abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
   }
 
   /// @inheritdoc INFTPermissions
+  function lastOwnershipChange(uint256 _positionId) external view returns (uint256 _blockNumber) {
+    _blockNumber = _positions[_positionId].lastOwnershipChange;
+  }
+
+  /// @inheritdoc INFTPermissions
   function hasPermission(uint256 _positionId, address _account, Permission _permission) public view returns (bool) {
     if (ownerOf(_positionId) == _account) {
       return true;
     }
-    AssignedPermissions memory _assigned = _assignedPermissions[_positionId][_account];
+    PositionData storage _positionData = _positions[_positionId];
+    AssignedPermissions memory _assigned = _positionData.assigned[_account];
     // If there was an ownership change after the permission was last updated, then the address doesn't have the permission
-    return _assigned.permissions.hasPermission(_permission) && lastOwnershipChange[_positionId] < _assigned.lastUpdated;
+    return _assigned.permissions.hasPermission(_permission) && _positionData.lastOwnershipChange < _assigned.lastUpdated;
   }
 
   /// @inheritdoc INFTPermissions
@@ -140,7 +151,7 @@ abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
   }
 
   function _setPermissions(uint256 _positionId, PermissionSet[] calldata _permissions) private {
-    mapping(address operator => AssignedPermissions permissions) storage _assigned = _assignedPermissions[_positionId];
+    mapping(address operator => AssignedPermissions permissions) storage _assigned = _positions[_positionId].assigned;
     uint64 _blockNumber = uint64(block.number);
     for (uint256 i = 0; i < _permissions.length;) {
       PermissionSet memory _permissionSet = _permissions[i];
@@ -159,14 +170,14 @@ abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
   function _update(address _to, uint256 _positionId, address _auth) internal override returns (address _from) {
     _from = super._update(_to, _positionId, _auth);
     if (_to == address(0)) {
-      // When token is being burned, we can delete this entry on the mapping
-      delete lastOwnershipChange[_positionId];
+      // When token is being burned, we can zero out this value
+      _positions[_positionId].lastOwnershipChange = 0;
       unchecked {
         _burnCounter++;
       }
     } else if (_from != address(0)) {
       // If the token is being minted, then no there is no need to need to write this
-      lastOwnershipChange[_positionId] = block.number;
+      _positions[_positionId].lastOwnershipChange = block.number;
     }
   }
 }
