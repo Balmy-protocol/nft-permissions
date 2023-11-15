@@ -194,8 +194,8 @@ abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
       _burnCounter++;
     }
 
-    // When token is being burned, we can zero out this value
-    _positions[_positionId].lastOwnershipChange = 0;
+    // When token is being burned, we set this value to the max, so that all previous permissions are revoked
+    _positions[_positionId].lastOwnershipChange = type(uint256).max;
 
     super._burn(_positionId);
   }
