@@ -83,4 +83,5 @@ This project is licensed under MIT.
 
 ## Audits
 
-This project has been audited by [Omniscia](https://twitter.com/Omniscia_sec). You can see the report [here](https://omniscia.io/reports/mean-finance-nft-permission-system-65536361239be600181362f3/).
+This project has been audited by [Omniscia](https://twitter.com/Omniscia_sec). You can see the report
+[here](https://omniscia.io/reports/mean-finance-nft-permission-system-65536361239be600181362f3/).
