@@ -125,6 +125,33 @@ contract NFTPermissionsTest is PRBTest, StdUtils {
     });
   }
 
+  function test_modifyPermissions_RevertWhen_ModifiedOnTheSameBlockAsTransfer() public {
+    address newOwner = address(10);
+
+    uint256 positionId = nftPermissions.mintWithPermissions(owner, Utils.buildEmptyPermissionSet());
+    vm.prank(owner);
+    nftPermissions.transferFrom(owner, newOwner, positionId);
+
+    vm.expectRevert(abi.encodeWithSelector(INFTPermissions.CantModifyPermissionsOnTheSameBlockPositionWasTransferred.selector));
+    vm.prank(newOwner);
+    nftPermissions.modifyPermissions(Utils.buildPositionPermissions(positionId, Utils.buildPermissionSet(operator1, Utils.permissions(PERMISSION_1))));
+  }
+
+  function test_modifyPermissions_WorkInTheNextBlockAfterTransfer() public {
+    address newOwner = address(10);
+
+    uint256 positionId = nftPermissions.mintWithPermissions(owner, Utils.buildEmptyPermissionSet());
+    vm.prank(owner);
+    nftPermissions.transferFrom(owner, newOwner, positionId);
+
+    vm.roll(block.number + 1);
+    vm.prank(newOwner);
+    INFTPermissions.PositionPermissions[] memory _permissions =
+      Utils.buildPositionPermissions(positionId, Utils.buildPermissionSet(operator1, Utils.permissions(PERMISSION_1)));
+    nftPermissions.modifyPermissions(_permissions);
+    _checkPermissions(_permissions);
+  }
+
   function test_permissionPermit_RevertWhen_DeadlineHasExpired() public {
     vm.expectRevert(abi.encodeWithSelector(INFTPermissions.ExpiredDeadline.selector));
 

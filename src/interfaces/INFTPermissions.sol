@@ -39,6 +39,9 @@ interface INFTPermissions {
   /// @notice Thrown when a user tries perform an operation without permission
   error AccountWithoutPermission(uint256 positionId, address account, Permission permission);
 
+  /// @notice Thrown when a user tries to modify permissions on the same block as a position transfer
+  error CantModifyPermissionsOnTheSameBlockPositionWasTransferred();
+
   /**
    * @notice The domain separator used in the permit signature
    * @return The domain seperator used in encoding of permit signature
