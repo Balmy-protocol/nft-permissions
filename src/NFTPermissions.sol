@@ -21,7 +21,8 @@ import { PermissionHash } from "./libraries/PermissionHash.sol";
  *      - Underlying contracts should not call _mint directly. Instead, they should call `_mintWithPermissions`
  *      - Underlying contracts should probably override `tokenURI` to provide the correct URI for their positions
  *      - Permissions are represented by a `uint8` but there can only be 192 different permisisons (0 <= permission ids < 192)
- *      - Permissions that were granted before or in the same block where the position was last transferred will be lost
+ *      - With each NFT transfer, all previous assigned permissions are lost
+ *      - New permissions can't be granted on the same block as a position transfer. The contract will revert in this case
  */
 abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
   type EncodedPermissions is uint192;
@@ -157,7 +158,10 @@ abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
   }
 
   function _setPermissions(uint256 _positionId, PermissionSet[] calldata _permissions) private {
-    mapping(address operator => AssignedPermissions permissions) storage _assigned = _positions[_positionId].assigned;
+    PositionData storage _positionData = _positions[_positionId];
+    // slither-disable-next-line incorrect-equality
+    if (_positionData.lastOwnershipChange == block.number) revert CantModifyPermissionsOnTheSameBlockPositionWasTransferred();
+    mapping(address operator => AssignedPermissions permissions) storage _assigned = _positionData.assigned;
     uint64 _blockNumber = uint64(block.number);
     for (uint256 i = 0; i < _permissions.length;) {
       PermissionSet memory _permissionSet = _permissions[i];
