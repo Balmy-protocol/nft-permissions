@@ -132,9 +132,11 @@ contract NFTPermissionsTest is PRBTest, StdUtils {
     vm.prank(owner);
     nftPermissions.transferFrom(owner, newOwner, positionId);
 
+    INFTPermissions.PositionPermissions[] memory _permissions =
+      Utils.buildPositionPermissions(positionId, Utils.buildPermissionSet(operator1, Utils.permissions(PERMISSION_1)));
     vm.expectRevert(abi.encodeWithSelector(INFTPermissions.CantModifyPermissionsOnTheSameBlockPositionWasTransferred.selector));
     vm.prank(newOwner);
-    nftPermissions.modifyPermissions(Utils.buildPositionPermissions(positionId, Utils.buildPermissionSet(operator1, Utils.permissions(PERMISSION_1))));
+    nftPermissions.modifyPermissions(_permissions);
   }
 
   function test_modifyPermissions_WorkInTheNextBlockAfterTransfer() public {
