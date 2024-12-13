@@ -159,6 +159,7 @@ abstract contract NFTPermissions is ERC721, EIP712, INFTPermissions {
 
   function _setPermissions(uint256 _positionId, PermissionSet[] calldata _permissions) private {
     PositionData storage _positionData = _positions[_positionId];
+    // slither-disable-next-line incorrect-equality
     if (_positionData.lastOwnershipChange == block.number) revert CantModifyPermissionsOnTheSameBlockPositionWasTransferred();
     mapping(address operator => AssignedPermissions permissions) storage _assigned = _positionData.assigned;
     uint64 _blockNumber = uint64(block.number);
