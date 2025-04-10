@@ -48,6 +48,6 @@
     "lint:sol": "forge fmt --check && yarn solhint \"{script,src,test}/**/*.sol\"",
     "prettier:check": "prettier --check \"**/*.{json,md,yml}\"",
     "prettier:write": "prettier --write \"**/*.{json,md,yml}\"",
-    "test-hardhat": "npx hardhat compile --no-typechain --show-stack-traces && npx hardhat test"
+    "test-hardhat": "yarn hardhat compile --no-typechain --show-stack-traces && yarn hardhat test"
   }
 }
