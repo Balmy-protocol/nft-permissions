@@ -1,10 +1,10 @@
 {
-  "name": "@mean-finance/permit2-adapter",
-  "description": "This repository holds some adapter contracts that will allow to use Permit2 from contracts that don't support it natively",
+  "name": "@balmy/nft-permissions",
+  "description": "A repository that contains all of Balmy's NFT Permissions",
   "version": "1.0.0",
   "author": {
-    "name": "Mean-Finance",
-    "url": "https://github.com/Mean-Finance"
+    "name": "Balmy",
+    "url": "https://github.com/Balmy-Protocol"
   },
   "devDependencies": {
     "@ethersproject/hash": "5.7.0",

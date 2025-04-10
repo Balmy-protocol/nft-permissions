@@ -6,7 +6,7 @@ import { takeSnapshot, SnapshotRestorer } from '@nomicfoundation/hardhat-network
 import { BigNumber, BigNumberish, Contract, constants } from 'ethers';
 
 describe('NFTPermissions', () => {
-  const NFT_NAME = 'Mean Finance - DCA Position';
+  const NFT_NAME = 'Balmy - DCA Position';
   const NFT_VERSION = '1';
   const OPERATOR = '0x0000000000000000000000000000000000000001'
 
