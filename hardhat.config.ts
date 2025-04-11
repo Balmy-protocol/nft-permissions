@@ -9,7 +9,7 @@ import 'hardhat-exposed';
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
   solidity: {
-    version: '0.8.28'
+    version: '0.8.20'
   },
 };
 
