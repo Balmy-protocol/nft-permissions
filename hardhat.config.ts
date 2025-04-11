@@ -7,14 +7,9 @@ import '@nomicfoundation/hardhat-network-helpers';
 import 'hardhat-exposed';
 
 const config: HardhatUserConfig = {
+  defaultNetwork: 'hardhat',
   solidity: {
-    version: "0.8.20",
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 200,
-      },
-    },
+    version: '0.8.20'
   },
 };
 
